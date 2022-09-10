@@ -1,0 +1,22 @@
+{
+  "name": "oatx",
+  "version": "0.1.0",
+  "description": "Generator-less JSONSchema types straight from OpenAPI spec",
+  "keywords": ["typescript", "OpenAPI", "type", "JSONSchema"],
+  "homepage": "https://github/varanauskas/oatx#README",
+  "bugs": "https://github.com/varanauskas/oatx/issues",
+  "license": "MIT",
+  "author": "Tadas Varanauskas",
+  "main": "index.ts",
+  "repository": "github:varanauskas/oatx",
+  "dependencies": {
+    "openapi3-ts": "^3.0.2"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.1.0"
+  },
+  "devDependencies": {
+    "json-schema-to-ts": "^2.5.5",
+    "typescript": "^4.8.3"
+  }
+}
