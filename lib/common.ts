@@ -1,7 +1,7 @@
 import type { ContentObject, OpenAPIObject, ReferenceObject } from "openapi3-ts";
 
-export type RequiredSpec = Pick<OpenAPIObject, "paths" | "components">;
-export type PathSpec = { paths: Record<string, unknown> };
+export type RequiredDoc = Pick<OpenAPIObject, "paths" | "components">;
+export type PathDoc = { paths: Record<string, unknown> };
 
 /**
  * Get value types of `T`
@@ -20,7 +20,7 @@ export type PathTemplate<Path extends string> = Path extends `${infer Prefix}{${
     : Path;
 
 /**
- * Extract path as specified in OpenAPI `Spec` based on request path
+ * Extract path as specified in OpenAPI `Doc` based on request path
  * ```
  * const spec = {
  *   paths: {
@@ -28,48 +28,48 @@ export type PathTemplate<Path extends string> = Path extends `${infer Prefix}{${
  *       "/posts/comments": {},
  *   }
  * };
- * const specPathWithParams: SpecPath<typeof spec, "/posts/1/comments/2"> = "/posts/{postId}/comments/{commentId}";
- * const specPathWithoutParams: SpecPath<typeof spec, "/posts/comments"> = "/posts/comments";
+ * const specPathWithParams: DocPath<typeof spec, "/posts/1/comments/2"> = "/posts/{postId}/comments/{commentId}";
+ * const specPathWithoutParams: DocPath<typeof spec, "/posts/comments"> = "/posts/comments";
  * ```
  */
-export type SpecPath<
-    Spec extends PathSpec,
-    Path extends PathTemplate<Extract<keyof Spec["paths"], string>>
+export type DocPath<
+    Doc extends PathDoc,
+    Path extends PathTemplate<Extract<keyof Doc["paths"], string>>
 > = ValueOf<{
-    [Template in Extract<keyof Spec["paths"], string>]: Path extends PathTemplate<Template> ? Template : never
+    [Template in Extract<keyof Doc["paths"], string>]: Path extends PathTemplate<Template> ? Template : never
 }>
 
-export type SpecPathTemplate<Spec extends PathSpec> = PathTemplate<Extract<keyof Spec["paths"], string>>;
-export type SpecPathMethod<Spec extends Pick<RequiredSpec, "paths">, Path extends SpecPathTemplate<Spec>> = keyof Spec["paths"][SpecPath<Spec, Path>];
+export type DocPathTemplate<Doc extends PathDoc> = PathTemplate<Extract<keyof Doc["paths"], string>>;
+export type DocPathMethod<Doc extends Pick<RequiredDoc, "paths">, Path extends DocPathTemplate<Doc>> = keyof Doc["paths"][DocPath<Doc, Path>];
 
-export type SpecOperation<Spec extends RequiredSpec, Path extends keyof Spec["paths"], Method extends keyof Spec["paths"][Path]> =
-    Spec["paths"][Path][Method];
+export type DocOperation<Doc extends RequiredDoc, Path extends keyof Doc["paths"], Method extends keyof Doc["paths"][Path]> =
+    Doc["paths"][Path][Method];
 
-export type ComponentTypes<Spec extends RequiredSpec> = Extract<keyof Spec["components"], string>;
+export type ComponentTypes<Doc extends RequiredDoc> = Extract<keyof Doc["components"], string>;
 
 export type ComponentRef<
-    Spec extends RequiredSpec,
-    Type extends ComponentTypes<Spec>,
+    Doc extends RequiredDoc,
+    Type extends ComponentTypes<Doc>,
     Ref extends ReferenceObject
 > = Ref extends { $ref: `#/components/${Type}/${infer Name}` }
-    ? Name extends keyof Spec["components"][Type]
-    ? Spec["components"][Type][Name] extends ReferenceObject
-    ? ComponentRef<Spec, Type, Spec["components"][Type][Name]>
-    : Spec["components"][Type][Name]
+    ? Name extends keyof Doc["components"][Type]
+    ? Doc["components"][Type][Name] extends ReferenceObject
+    ? ComponentRef<Doc, Type, Doc["components"][Type][Name]>
+    : Doc["components"][Type][Name]
     : never
     : never;
 
 export type SchemaRef<
-    Spec extends RequiredSpec,
+    Doc extends RequiredDoc,
     Schema> = Schema extends { $ref: `#/components/schemas/${infer Name}` }
-    ? "schemas" extends keyof Spec["components"] ? Name extends keyof Spec["components"]["schemas"]
-    ? SchemaRef<Spec, Spec["components"]["schemas"][Name]>
+    ? "schemas" extends keyof Doc["components"] ? Name extends keyof Doc["components"]["schemas"]
+    ? SchemaRef<Doc, Doc["components"]["schemas"][Name]>
     : never : never
-    : { [Key in keyof Schema]: SchemaRef<Spec, Schema[Key]> };
+    : { [Key in keyof Schema]: SchemaRef<Doc, Schema[Key]> };
 
 
 export type ObjectWithContentSchema<
-    Spec extends RequiredSpec, Object extends { content?: ContentObject }
+    Doc extends RequiredDoc, Object extends { content?: ContentObject }
 > = Object["content"] extends ContentObject
-    ? SchemaRef<Spec, Object["content"]["application/json"]["schema"]>
+    ? SchemaRef<Doc, Object["content"]["application/json"]["schema"]>
     : never;

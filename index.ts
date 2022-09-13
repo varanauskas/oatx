@@ -1,2 +1,2 @@
-export type { JsonRequestBodySchema } from "./lib/Request";
-export type { JsonResponseSchemas } from "./lib/Response";
+export type { RequestBodySchema } from "./lib/RequestBodySchema";
+export type { ResponseSchemas } from "./lib/ResponseSchemas";
