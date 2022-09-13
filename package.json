@@ -1,6 +1,6 @@
 {
   "name": "oatx",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Generator-less JSONSchema types straight from OpenAPI spec",
   "keywords": ["typescript", "OpenAPI", "type", "JSONSchema"],
   "homepage": "https://github/varanauskas/oatx#README",
